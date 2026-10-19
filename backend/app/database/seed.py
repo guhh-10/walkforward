@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 
 from app.models import Category
 
-
 DEFAULT_CATEGORIES = {
     "income": [
         "Salary",

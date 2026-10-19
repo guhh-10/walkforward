@@ -1,0 +1,16 @@
+[tool.ruff]
+line-length = 88
+src = ["app"]
+extend-exclude = ["migrations/versions"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # Basic style errors
+    "F",    # Undefined names and other code errors
+    "I",    # Import sorting
+    "UP",   # Modern Python syntax suggestions
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

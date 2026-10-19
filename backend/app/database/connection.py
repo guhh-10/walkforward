@@ -1,8 +1,8 @@
 from pathlib import Path
 
 from sqlalchemy import create_engine, event
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
 from sqlalchemy.engine import URL
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 # Project root: personal-finance-tracker/
 PROJECT_ROOT = Path(__file__).resolve().parents[3]

@@ -1,5 +1,4 @@
 import app.models  # noqa: F401
-
 from app.database.connection import Base, SessionLocal, engine
 from app.database.seed import seed_categories
 

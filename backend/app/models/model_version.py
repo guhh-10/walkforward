@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import (
     Boolean,
@@ -6,10 +7,12 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
-    func,
     text,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+if TYPE_CHECKING:
+    from app.models.classification import Classification
 
 from app.database.connection import Base
 

@@ -22,7 +22,13 @@ data/*.db-*
 backend/models_artifacts/*.joblib
 
 # Editor and operating system
-.vscode/
 .idea/
 .DS_Store
 Thumbs.db
+
+# VS Code personal files
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
