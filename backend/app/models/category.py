@@ -45,6 +45,4 @@ class Category(Base):
         nullable=False,
     )
 
-    transactions: Mapped[list["Transaction"]] = relationship(
-        back_populates="category"
-    )
+    transactions: Mapped[list["Transaction"]] = relationship(back_populates="category")

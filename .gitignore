@@ -1,34 +1,180 @@
-
-# Python
+# ==============================================================================
+# Python & Backend
+# ==============================================================================
+# Bytecode and cache
 __pycache__/
 *.py[cod]
+*$py.class
+
+# Virtual environments
 .venv/
 venv/
-.pytest_cache/
-.mypy_cache/
+env/
+ENV/
+env.bak/
+venv.bak/
 
-# Environment configuration and secrets
+# Packaging and distribution
+build/
+dist/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Testing, coverage, and static analysis
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyre/
+.pytype/
+.coverage
+.coverage.*
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# ==============================================================================
+# JavaScript / TypeScript / Frontend (React + Vite + Vitest)
+# ==============================================================================
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+dist-ssr/
+*.local
+
+# Testing and coverage
+coverage/
+.vitest/
+
+# TypeScript
+*.tsbuildinfo
+
+# Tooling and linter caches
+.eslintcache
+.oxlint-cache
+.prettier-cache
+.stylelintcache
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# ==============================================================================
+# Local Data, SQLite Databases & Backups
+# ==============================================================================
+# Ignore entire data/ directory except .gitkeep
+data/*
+!data/.gitkeep
+
+# SQLite files, WAL journals, and temporary test databases
+*.db
+*.db-*
+*.db.bak
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-wal
+*.sqlite3-shm
+*.backup
+*.dump
+test*.db
+temp*.db
+
+# Transaction CSV imports and exports containing personal finance data
+*.csv
+!*sample*.csv
+!*example*.csv
+data/exports/
+data/imports/
+exports/
+imports/
+
+# ==============================================================================
+# Machine Learning Model Artifacts
+# ==============================================================================
+# Both singular and plural directory paths per spec
+**/model_artifacts/*
+**/models_artifacts/*
+!**/model_artifacts/.gitkeep
+!**/models_artifacts/.gitkeep
+
+# Serialized pipelines and model files (category_clf_*.joblib)
+*.joblib
+*.pkl
+*.pickle
+*.onnx
+
+# Evaluation reports, confusion matrix plots, and metrics dumps
+reports/
+evaluation_reports/
+*.eval.json
+*.metrics.json
+
+# ==============================================================================
+# Environment Configuration & Secrets
+# ==============================================================================
 .env
 .env.*
 !.env.example
+!.env.template
+*.pem
+*.key
 
-# Frontend
-frontend/node_modules/
-frontend/dist/
+# ==============================================================================
+# General Logs & Temporary Files
+# ==============================================================================
+logs/
+*.log
+*.tmp
+*.temp
 
-# Local database and generated files
-data/*.db
-data/*.db-*
-backend/models_artifacts/*.joblib
-
-# Editor and operating system
+# ==============================================================================
+# IDEs & Text Editors
+# ==============================================================================
+# JetBrains
 .idea/
-.DS_Store
-Thumbs.db
 
-# VS Code personal files
+# Visual Studio Code (track shared config, ignore personal workspace state)
 .vscode/*
 !.vscode/settings.json
 !.vscode/extensions.json
 !.vscode/launch.json
 !.vscode/tasks.json
+
+# Vim / Emacs / Backup files
+*.swp
+*.swo
+*~
+*.bak
+
+# ==============================================================================
+# Operating System
+# ==============================================================================
+# macOS
+.DS_Store
+.DS_Store?
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini

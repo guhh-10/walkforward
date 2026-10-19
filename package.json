@@ -1,0 +1,22 @@
+{
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0"
+  },
+  "scripts": {
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "backend/**/*.py": [
+      "backend/.venv/Scripts/python.exe -m ruff check --config backend/pyproject.toml --fix",
+      "backend/.venv/Scripts/python.exe -m ruff format --config backend/pyproject.toml"
+    ],
+    "frontend/**/*.{ts,tsx,js,jsx}": [
+      "npm --prefix frontend exec -- prettier --write",
+      "frontend/node_modules/.bin/oxlint"
+    ],
+    "frontend/**/*.{json,css,md}": [
+      "npm --prefix frontend exec -- prettier --write"
+    ]
+  }
+}

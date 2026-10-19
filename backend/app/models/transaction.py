@@ -65,9 +65,7 @@ class Transaction(Base):
         nullable=False,
     )
 
-    category: Mapped["Category"] = relationship(
-        back_populates="transactions"
-    )
+    category: Mapped["Category"] = relationship(back_populates="transactions")
 
     classification: Mapped["Classification | None"] = relationship(
         back_populates="transaction",

@@ -5,7 +5,7 @@ from app.models.transaction import Transaction
 
 __all__ = [
     "Category",
-    "Transaction",
-    "ModelVersion",
     "Classification",
+    "ModelVersion",
+    "Transaction",
 ]

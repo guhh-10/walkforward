@@ -79,9 +79,7 @@ class Classification(Base):
         nullable=False,
     )
 
-    transaction: Mapped["Transaction"] = relationship(
-        back_populates="classification"
-    )
+    transaction: Mapped["Transaction"] = relationship(back_populates="classification")
 
     model_version: Mapped["ModelVersion | None"] = relationship(
         back_populates="classifications"
