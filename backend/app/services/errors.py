@@ -16,3 +16,8 @@ class NotFoundError(DomainError):
 class ValidationDomainError(DomainError):
     def __init__(self, code: str, detail: str) -> None:
         super().__init__(422, code, detail)
+
+
+class ConflictError(DomainError):
+    def __init__(self, code: str, detail: str) -> None:
+        super().__init__(409, code, detail)
