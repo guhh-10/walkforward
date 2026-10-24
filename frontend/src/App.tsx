@@ -1,24 +1,15 @@
-import { useEffect, useState } from 'react';
-import { getHealth } from './api/client';
+import { useState } from 'react';
+import { AppShell } from './components/AppShell';
+import { currentMonth } from './lib/format';
+import Dashboard from './pages/Dashboard';
 
 function App() {
-  const [status, setStatus] = useState('Checking API...');
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    getHealth()
-      .then((result) => setStatus(result.status))
-      .catch((err: unknown) => {
-        setError(err instanceof Error ? err.message : 'Unknown error');
-      });
-  }, []);
+  const [month, setMonth] = useState(() => currentMonth());
 
   return (
-    <main>
-      <h1>Personal Finance Tracker</h1>
-      <p>Frontend: Running</p>
-      <p>Backend: {error ?? status}</p>
-    </main>
+    <AppShell month={month} onMonthChange={setMonth}>
+      <Dashboard month={month} />
+    </AppShell>
   );
 }
 
