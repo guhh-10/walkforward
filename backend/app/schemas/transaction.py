@@ -4,11 +4,12 @@ from typing import TYPE_CHECKING, Literal, cast
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.schemas.classification import ClassificationOut
+
 if TYPE_CHECKING:
     from app.models.transaction import Transaction
 
 TransactionType = Literal["income", "expense"]
-ClassificationStatus = Literal["PREDICTED", "CONFIRMED", "MANUALLY_CORRECTED"]
 
 
 class TransactionIn(BaseModel):
@@ -33,7 +34,7 @@ class TransactionOut(BaseModel):
     category_id: int
     category_name: str
     is_future: bool
-    classification: None = None  # populated in the classification stage
+    classification: ClassificationOut | None = None
     created_at: dt.datetime
     updated_at: dt.datetime
 
@@ -48,6 +49,11 @@ class TransactionOut(BaseModel):
             category_id=txn.category_id,
             category_name=txn.category.name,
             is_future=txn.txn_date > dt.date.today(),
+            classification=(
+                ClassificationOut.from_model(txn.classification)
+                if txn.classification
+                else None
+            ),
             created_at=txn.created_at,
             updated_at=txn.updated_at,
         )

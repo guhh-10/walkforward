@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.database.dependencies import get_db
 from app.repositories.transaction_repository import TransactionFilters
+from app.schemas.classification import ClassificationStatus
 from app.schemas.transaction import (
-    ClassificationStatus,
     TransactionIn,
     TransactionOut,
     TransactionPage,

@@ -7,6 +7,16 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.models import Classification, Transaction
 
+
+def _load_options() -> tuple[Any, ...]:
+    classification = joinedload(Transaction.classification)
+    return (
+        joinedload(Transaction.category),
+        classification.joinedload(Classification.predicted_category),
+        classification.joinedload(Classification.model_version),
+    )
+
+
 _S = TypeVar("_S", bound=Select[Any])
 
 
@@ -44,11 +54,7 @@ def add(db: Session, txn: Transaction) -> Transaction:
 
 
 def get(db: Session, txn_id: int) -> Transaction | None:
-    stmt = (
-        select(Transaction)
-        .options(joinedload(Transaction.category))
-        .where(Transaction.id == txn_id)
-    )
+    stmt = select(Transaction).options(*_load_options()).where(Transaction.id == txn_id)
     return db.scalars(stmt).unique().one_or_none()
 
 
@@ -58,7 +64,7 @@ def list_page(
     total = db.scalar(_apply_filters(select(func.count(Transaction.id)), filters)) or 0
     stmt = (
         _apply_filters(select(Transaction), filters)
-        .options(joinedload(Transaction.category))
+        .options(*_load_options())
         .order_by(Transaction.txn_date.desc(), Transaction.id.desc())
         .offset((page - 1) * page_size)
         .limit(page_size)
