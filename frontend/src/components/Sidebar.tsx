@@ -1,21 +1,23 @@
 import { APP_NAME } from '../config';
+import type { PageId } from '../hooks/useHashPage';
 import { Icon } from './Icon';
 
 interface NavItem {
   label: string;
   icon: string;
-  href?: string;
+  /** Items without a page are not built yet (see the roadmap). */
+  page?: PageId;
 }
 
-// Pages without an href are not built yet (see the roadmap).
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Overview', icon: 'dashboard', href: '#overview' },
+  { label: 'Overview', icon: 'dashboard', page: 'overview' },
   { label: 'Transactions', icon: 'receipt_long' },
   { label: 'Forecast', icon: 'trending_up' },
   { label: 'Categories', icon: 'category' },
+  { label: 'Model evaluation', icon: 'model_training', page: 'model' },
 ];
 
-export function Sidebar() {
+export function Sidebar({ active }: { active: PageId }) {
   return (
     <aside className="sidebar">
       <div className="brand">
@@ -29,25 +31,29 @@ export function Sidebar() {
       </div>
 
       <nav className="nav" aria-label="Main">
-        {NAV_ITEMS.map((item) =>
-          item.href ? (
+        {NAV_ITEMS.map((item) => {
+          if (!item.page) {
+            return (
+              <span key={item.label} className="nav__item nav__item--disabled" aria-disabled="true">
+                <Icon name={item.icon} />
+                <span>{item.label}</span>
+                <span className="nav__soon">Soon</span>
+              </span>
+            );
+          }
+          const isActive = item.page === active;
+          return (
             <a
               key={item.label}
-              className="nav__item nav__item--active"
-              href={item.href}
-              aria-current="page"
+              className={`nav__item${isActive ? ' nav__item--active' : ''}`}
+              href={`#${item.page}`}
+              aria-current={isActive ? 'page' : undefined}
             >
               <Icon name={item.icon} />
               <span>{item.label}</span>
             </a>
-          ) : (
-            <span key={item.label} className="nav__item nav__item--disabled" aria-disabled="true">
-              <Icon name={item.icon} />
-              <span>{item.label}</span>
-              <span className="nav__soon">Soon</span>
-            </span>
-          ),
-        )}
+          );
+        })}
       </nav>
     </aside>
   );

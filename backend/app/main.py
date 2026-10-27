@@ -3,7 +3,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api import categories, classification, summary, transactions
+from app.api import categories, classification, ml, summary, transactions
 from app.services.errors import DomainError
 
 app = FastAPI(
@@ -21,6 +21,7 @@ app.add_middleware(
 
 app.include_router(categories.router)
 app.include_router(classification.router)
+app.include_router(ml.router)
 app.include_router(summary.router)
 app.include_router(transactions.router)
 

@@ -58,3 +58,40 @@ export interface TransactionQuery {
   page?: number;
   page_size?: number;
 }
+
+export interface ClassMetrics {
+  category_id: number;
+  name: string;
+  /** null when the class had no examples in the test set. */
+  precision: number | null;
+  recall: number | null;
+  f1: number | null;
+  support: number;
+}
+
+export interface ConfusionMatrix {
+  labels: string[];
+  /** Rows are actual categories, columns are predicted categories. */
+  matrix: number[][];
+}
+
+export interface EvaluationMetrics {
+  accuracy: number;
+  macro_f1: number;
+  weighted_f1: number;
+  per_class: ClassMetrics[];
+  confusion_matrix: ConfusionMatrix;
+  n_train: number;
+  n_test: number;
+  test_size: number;
+  seed: number;
+  warnings: string[];
+}
+
+export interface Evaluation {
+  version_tag: string;
+  algorithm: string;
+  trained_at: string;
+  dataset_size: number;
+  metrics: EvaluationMetrics;
+}

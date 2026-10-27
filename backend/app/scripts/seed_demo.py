@@ -5,10 +5,14 @@ Usage (backend running on :8000):  python -m app.scripts.seed_demo
 
 import datetime as dt
 import json
+import sys
 import urllib.request
 from typing import Any
+from urllib.error import URLError
 
-BASE = "http://localhost:8000/api"
+# 127.0.0.1, not "localhost": on Windows "localhost" resolves to ::1 first while
+# uvicorn listens on IPv4 only, so every request stalls ~2s before falling back.
+BASE = "http://127.0.0.1:8000/api"
 
 # (type, category, description, base amount, day of month)
 TEMPLATE: list[tuple[str, str, str, float, int]] = [
@@ -34,8 +38,11 @@ def call(method: str, path: str, body: Any = None) -> Any:
         method=method,
         headers={"Content-Type": "application/json"},
     )
-    with urllib.request.urlopen(req) as resp:
-        return json.loads(resp.read())
+    try:
+        with urllib.request.urlopen(req) as resp:
+            return json.loads(resp.read())
+    except URLError:
+        sys.exit("Cannot reach the API. Start it first: uvicorn app.main:app --reload")
 
 
 def month_start(offset: int, today: dt.date) -> dt.date:

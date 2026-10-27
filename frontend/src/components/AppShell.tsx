@@ -1,22 +1,23 @@
 import type { ReactNode } from 'react';
+import type { PageId } from '../hooks/useHashPage';
 import { ApiStatus } from './ApiStatus';
-import { MonthPicker } from './MonthPicker';
 import { Sidebar } from './Sidebar';
 
 interface AppShellProps {
-  month: string;
-  onMonthChange: (month: string) => void;
+  page: PageId;
+  /** Page-specific controls shown on the left of the top bar. */
+  toolbar?: ReactNode;
   children: ReactNode;
 }
 
-export function AppShell({ month, onMonthChange, children }: AppShellProps) {
+export function AppShell({ page, toolbar, children }: AppShellProps) {
   return (
     <div className="shell">
-      <Sidebar />
+      <Sidebar active={page} />
       <div className="shell__main">
         <header className="topbar">
           <div className="topbar__inner">
-            <MonthPicker month={month} onChange={onMonthChange} />
+            <div>{toolbar}</div>
             <ApiStatus />
           </div>
         </header>
