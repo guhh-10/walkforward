@@ -9,8 +9,10 @@ import statistics
 import warnings
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
+from typing import Any, cast
 
 import numpy as np
+import numpy.typing as npt
 from statsmodels.tsa.holtwinters import SimpleExpSmoothing
 
 from app.ml.months import month_of, month_range
@@ -96,11 +98,14 @@ def simple_exp_smoothing(history: Sequence[float]) -> float:
         # Only the forecast is used here, so that warning carries no signal. The
         # guard spans both calls because forecast() re-fits internally.
         warnings.simplefilter("ignore", RuntimeWarning)
-        model = SimpleExpSmoothing(
+        # statsmodels ships no type information, so everything it returns is
+        # Unknown to the type checker; the single step forecast below is a float
+        # array.
+        model: Any = SimpleExpSmoothing(
             np.asarray(history, dtype=float), initialization_method="estimated"
         )
-        forecast = model.fit(optimized=True).forecast(1)
-    return float(np.asarray(forecast).ravel()[0])
+        forecast = cast(npt.NDArray[np.float64], model.fit(optimized=True).forecast(1))
+    return float(forecast[0])
 
 
 # ---------- the fixed core candidate set ----------
