@@ -4,6 +4,7 @@ import { MonthPicker } from './components/MonthPicker';
 import { useHashPage } from './hooks/useHashPage';
 import { currentMonth } from './lib/format';
 import Dashboard from './pages/Dashboard';
+import Forecast from './pages/Forecast';
 import ModelEval from './pages/ModelEval';
 
 function App() {
@@ -15,7 +16,9 @@ function App() {
       page={page}
       toolbar={page === 'overview' ? <MonthPicker month={month} onChange={setMonth} /> : null}
     >
-      {page === 'overview' ? <Dashboard month={month} /> : <ModelEval />}
+      {page === 'overview' && <Dashboard month={month} />}
+      {page === 'forecast' && <Forecast />}
+      {page === 'model' && <ModelEval />}
     </AppShell>
   );
 }

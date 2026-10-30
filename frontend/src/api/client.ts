@@ -45,11 +45,12 @@ async function readError(response: Response): Promise<{ code: string; detail: st
 
 export async function request<T>(
   path: string,
-  options: { params?: Params; signal?: AbortSignal } = {},
+  options: { params?: Params; signal?: AbortSignal; method?: 'GET' | 'POST' } = {},
 ): Promise<T> {
   let response: Response;
   try {
     response = await fetch(buildUrl(path, options.params), {
+      method: options.method ?? 'GET',
       headers: { Accept: 'application/json' },
       signal: options.signal,
     });

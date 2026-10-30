@@ -95,3 +95,30 @@ export interface Evaluation {
   dataset_size: number;
   metrics: EvaluationMetrics;
 }
+
+export type Reliability = 'low' | 'medium' | 'high';
+
+export interface ModelMetrics {
+  mae: number;
+  rmse: number;
+  /** Percent; null when every backtest actual was zero. */
+  mape: number | null;
+  mape_excluded: number;
+}
+
+export interface Forecast {
+  target_month: string; // YYYY-MM
+  selected_model: string;
+  reliability: Reliability;
+  method: 'empirical_quantile' | 't_approximation';
+  optimistic: number;
+  baseline: number;
+  conservative: number;
+  warning: string | null;
+  history_start: string; // YYYY-MM
+  history_months: number;
+  backtest: {
+    per_model: Record<string, ModelMetrics>;
+    residuals_used: number;
+  };
+}

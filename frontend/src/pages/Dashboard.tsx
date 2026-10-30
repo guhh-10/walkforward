@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Async } from '../components/Async';
 import { CategoryBreakdown } from '../components/CategoryBreakdown';
+import { ForecastBar } from '../components/ForecastBar';
 import { RecentActivity } from '../components/RecentActivity';
 import { ReviewBanner } from '../components/ReviewBanner';
 import { SummaryCards } from '../components/SummaryCards';
 import { TrendChart } from '../components/TrendChart';
+import { useForecast } from '../hooks/useForecast';
 import { useMonthlySummary, useTrends } from '../hooks/useSummary';
 import { useRecentTransactions, useReviewCount } from '../hooks/useTransactions';
 import { formatMonth, greeting, shiftMonth } from '../lib/format';
@@ -18,6 +20,7 @@ export default function Dashboard({ month }: { month: string }) {
   const trends = useTrends(horizon);
   const recent = useRecentTransactions(5);
   const review = useReviewCount();
+  const forecast = useForecast();
 
   return (
     <div className="dashboard">
@@ -33,6 +36,8 @@ export default function Dashboard({ month }: { month: string }) {
           <SummaryCards summary={data} previous={previous.loading ? null : previous.data} />
         )}
       </Async>
+
+      {forecast.data !== null && <ForecastBar forecast={forecast.data} />}
 
       <div className="dashboard__charts">
         <Async query={trends} minHeight={380}>
