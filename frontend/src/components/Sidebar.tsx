@@ -12,6 +12,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: 'Overview', icon: 'dashboard', page: 'overview' },
   { label: 'Transactions', icon: 'receipt_long' },
+  { label: 'Review queue', icon: 'fact_check', page: 'review' },
   { label: 'Forecast', icon: 'trending_up', page: 'forecast' },
   { label: 'Categories', icon: 'category' },
   { label: 'Model evaluation', icon: 'model_training', page: 'model' },

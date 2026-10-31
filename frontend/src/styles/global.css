@@ -310,6 +310,21 @@ button {
   background: var(--surface-low);
 }
 
+.btn--primary {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .btn--ghost {
   border-color: transparent;
   background: transparent;

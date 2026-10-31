@@ -20,3 +20,13 @@ export function useReviewCount(): Query<number> {
   );
   return useApi(fetcher);
 }
+
+/** The review queue: transactions whose predicted category awaits confirmation. */
+export function useReviewQueue(page: number, pageSize: number): Query<TransactionPage> {
+  const fetcher = useCallback(
+    (signal: AbortSignal) =>
+      getTransactions({ status: 'PREDICTED', page, page_size: pageSize }, signal),
+    [page, pageSize],
+  );
+  return useApi(fetcher);
+}

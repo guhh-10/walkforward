@@ -1,6 +1,8 @@
+import { Icon } from './Icon';
+
 export function ReviewBanner({ count }: { count: number }) {
   return (
-    <section className="review-banner" aria-label="Review queue">
+    <a className="review-banner review-banner--link" href="#review" aria-label="Open review queue">
       <span className="dot dot--amber" />
       <div>
         <h2 className="review-banner__title">
@@ -10,6 +12,7 @@ export function ReviewBanner({ count }: { count: number }) {
           Predicted categories are waiting for your confirmation.
         </p>
       </div>
-    </section>
+      <Icon name="chevron_right" size={20} className="review-banner__go" />
+    </a>
   );
 }

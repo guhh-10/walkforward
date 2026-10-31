@@ -84,18 +84,62 @@ def create_transaction(db: Session, data: TransactionIn) -> Transaction:
     return get_transaction(db, txn.id)
 
 
+def _review_transition(txn: Transaction, category_id: int) -> None:
+    """Accepting the prediction confirms it; a different category is a correction."""
+    classification = txn.classification
+    if classification is None:
+        return
+    classification.status = (
+        "CONFIRMED"
+        if category_id == classification.predicted_category_id
+        else "MANUALLY_CORRECTED"
+    )
+
+
+def _reclassify(db: Session, txn: Transaction) -> None:
+    """A changed description makes the old guess moot: predict again, in place."""
+    prediction = classifier_service.predict(db, txn.description, txn.type)
+    if prediction is None:
+        return
+    classification = txn.classification
+    if classification is None:
+        classification_repository.add(
+            db,
+            Classification(
+                transaction_id=txn.id,
+                model_version_id=prediction.model_version_id,
+                predicted_category_id=prediction.category_id,
+                predicted_confidence=prediction.confidence,
+                status="PREDICTED",
+            ),
+        )
+        return
+    classification.model_version_id = prediction.model_version_id
+    classification.predicted_category_id = prediction.category_id
+    classification.predicted_confidence = prediction.confidence
+    classification.status = "PREDICTED"
+
+
 def update_transaction(db: Session, txn_id: int, data: TransactionIn) -> Transaction:
     txn = get_transaction(db, txn_id)
     category_id = _validate_category(db, data.category_id, data.type)
+    description_changed = data.description != txn.description
+
     txn.amount_cents = to_cents(data.amount)
     txn.type = data.type
     txn.txn_date = data.date
     txn.description = data.description
     txn.category_id = category_id
-    # Classification status transitions (CONFIRMED / MANUALLY_CORRECTED) and
-    # re-prediction on a changed description arrive with the correction flow.
+
+    # §3.3: an edited description invalidates the review outcome and is re-predicted;
+    # otherwise the user's chosen category confirms or corrects the prediction.
+    if description_changed:
+        _reclassify(db, txn)
+    else:
+        _review_transition(txn, category_id)
+
     db.commit()
-    db.expire(txn)  # refresh server-side updated_at and the category relationship
+    db.expire(txn)  # refresh updated_at, the category, and the classification
     return get_transaction(db, txn_id)
 
 

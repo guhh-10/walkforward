@@ -160,6 +160,81 @@ def test_classification_is_deleted_with_its_transaction(
     assert client.get(TXN, params={"status": "PREDICTED"}).json()["total"] == 0
 
 
+# ---------- correction flow ----------
+def put(client: TestClient, txn: dict[str, Any], **over: Any) -> httpx2.Response:
+    """Send the transaction back the way the edit form does, with overrides applied."""
+    body: dict[str, Any] = {
+        "amount": txn["amount"],
+        "type": txn["type"],
+        "date": txn["date"],
+        "description": txn["description"],
+        "category_id": txn["category_id"],
+    }
+    body.update(over)
+    return client.put(f"{TXN}/{txn['id']}", json=body)
+
+
+def test_accepting_the_prediction_confirms_it(
+    client: TestClient, cat: CategoryIds, active_model: Path
+) -> None:
+    txn = create(client, description="Alfamart snacks").json()  # predicted Groceries
+    r = put(client, txn)
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["category_id"] == cat["expense", "Groceries"]
+    assert body["category_name"] == "Groceries"
+    assert body["classification"]["status"] == "CONFIRMED"
+
+
+def test_choosing_another_category_corrects_it(
+    client: TestClient, cat: CategoryIds, active_model: Path
+) -> None:
+    txn = create(client, description="Alfamart snacks").json()  # predicted Groceries
+    body = put(client, txn, category_id=cat["expense", "Dining/Coffee"]).json()
+    assert body["category_name"] == "Dining/Coffee"  # the final category is the user's
+    assert body["classification"]["status"] == "MANUALLY_CORRECTED"
+    assert body["classification"]["predicted_category"] == "Groceries"
+
+
+def test_reviewed_transactions_leave_the_queue(
+    client: TestClient, cat: CategoryIds, active_model: Path
+) -> None:
+    first = create(client, description="Alfamart snacks").json()
+    second = create(client, description="Gojek ride").json()
+    assert client.get(TXN, params={"status": "PREDICTED"}).json()["total"] == 2
+
+    put(client, first)  # accept
+    put(client, second, category_id=cat["expense", "Shopping"])  # correct
+    assert client.get(TXN, params={"status": "PREDICTED"}).json()["total"] == 0
+
+
+def test_editing_the_description_repredicts_and_resets_status(
+    client: TestClient, cat: CategoryIds, active_model: Path
+) -> None:
+    txn = create(client, description="Gojek ride").json()  # predicted Transportation
+    confirmed = put(client, txn).json()
+    assert confirmed["classification"]["status"] == "CONFIRMED"
+
+    body = put(client, confirmed, description="Alfamart snacks").json()
+    assert body["classification"]["status"] == "PREDICTED"  # the old review is moot
+    assert body["classification"]["predicted_category"] == "Groceries"
+    assert body["classification"]["model_version"] == "v1"
+    assert body["category_name"] == "Transportation"  # the user's category is kept
+
+
+def test_update_without_a_usable_prediction_keeps_no_classification(
+    client: TestClient, cat: CategoryIds, active_model: Path
+) -> None:
+    txn = create(
+        client, description="12345", category_id=cat["expense", "Groceries"]
+    ).json()
+    assert txn["classification"] is None
+    r = put(client, txn, amount=7)
+    assert r.status_code == 200
+    assert r.json()["classification"] is None
+    assert r.json()["amount"] == 7
+
+
 # ---------- ML failures never block CRUD ----------
 def test_missing_model_file_degrades_gracefully(
     client: TestClient, cat: CategoryIds, active_model: Path

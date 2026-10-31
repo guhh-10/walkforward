@@ -6,6 +6,7 @@ import { currentMonth } from './lib/format';
 import Dashboard from './pages/Dashboard';
 import Forecast from './pages/Forecast';
 import ModelEval from './pages/ModelEval';
+import Review from './pages/Review';
 
 function App() {
   const page = useHashPage();
@@ -17,6 +18,7 @@ function App() {
       toolbar={page === 'overview' ? <MonthPicker month={month} onChange={setMonth} /> : null}
     >
       {page === 'overview' && <Dashboard month={month} />}
+      {page === 'review' && <Review />}
       {page === 'forecast' && <Forecast />}
       {page === 'model' && <ModelEval />}
     </AppShell>

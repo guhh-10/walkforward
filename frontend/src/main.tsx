@@ -4,6 +4,7 @@ import './styles/global.css';
 import './styles/dashboard.css';
 import './styles/model.css';
 import './styles/forecast.css';
+import './styles/review.css';
 import App from './App.tsx';
 
 createRoot(document.getElementById('root')!).render(

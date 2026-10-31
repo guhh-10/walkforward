@@ -45,13 +45,23 @@ async function readError(response: Response): Promise<{ code: string; detail: st
 
 export async function request<T>(
   path: string,
-  options: { params?: Params; signal?: AbortSignal; method?: 'GET' | 'POST' } = {},
+  options: {
+    params?: Params;
+    signal?: AbortSignal;
+    method?: 'GET' | 'POST' | 'PUT';
+    body?: unknown;
+  } = {},
 ): Promise<T> {
+  const { body } = options;
   let response: Response;
   try {
     response = await fetch(buildUrl(path, options.params), {
       method: options.method ?? 'GET',
-      headers: { Accept: 'application/json' },
+      headers: {
+        Accept: 'application/json',
+        ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+      },
+      body: body === undefined ? undefined : JSON.stringify(body),
       signal: options.signal,
     });
   } catch (err) {

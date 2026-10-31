@@ -27,6 +27,24 @@ export interface TrendPoint {
   net: number;
 }
 
+export interface Category {
+  id: number;
+  name: string;
+  type: TransactionType;
+  is_default: boolean;
+  created_at: string;
+}
+
+export interface Classification {
+  predicted_category_id: number;
+  predicted_category: string;
+  /** Model probability for the predicted category, 0-1. */
+  confidence: number;
+  status: ClassificationStatus;
+  /** Version tag of the model that produced the prediction, or null. */
+  model_version: string | null;
+}
+
 export interface TransactionOut {
   id: number;
   amount: number;
@@ -36,9 +54,18 @@ export interface TransactionOut {
   category_id: number;
   category_name: string;
   is_future: boolean;
-  classification: unknown; // typed in the classification stage
+  classification: Classification | null;
   created_at: string;
   updated_at: string;
+}
+
+/** Request body for creating or replacing a transaction (PUT replaces all fields). */
+export interface TransactionInput {
+  amount: number;
+  type: TransactionType;
+  date: string; // YYYY-MM-DD
+  description: string;
+  category_id: number;
 }
 
 export interface TransactionPage {
