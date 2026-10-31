@@ -28,7 +28,11 @@ function ErrorState({ error, onRetry }: { error: Error; onRetry: () => void }) {
 export function Async<T>({ query, minHeight = 120, children }: AsyncProps<T>) {
   if (query.data === null) {
     if (query.error) return <ErrorState error={query.error} onRetry={query.reload} />;
-    return <div className="skeleton" style={{ minHeight }} aria-busy="true" />;
+    return (
+      <div className="skeleton" style={{ minHeight }} role="status" aria-busy="true">
+        <span className="sr-only">Loading…</span>
+      </div>
+    );
   }
   return (
     <div className={query.loading ? 'async async--stale' : 'async'}>{children(query.data)}</div>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Async } from '../components/Async';
 import { CategoryBreakdown } from '../components/CategoryBreakdown';
 import { ForecastBar } from '../components/ForecastBar';
+import { Icon } from '../components/Icon';
 import { RecentActivity } from '../components/RecentActivity';
 import { ReviewBanner } from '../components/ReviewBanner';
 import { SummaryCards } from '../components/SummaryCards';
@@ -11,6 +12,23 @@ import { useMonthlySummary, useTrends } from '../hooks/useSummary';
 import { useRecentTransactions, useReviewCount } from '../hooks/useTransactions';
 import { formatMonth, greeting, shiftMonth } from '../lib/format';
 import type { Horizon } from '../lib/metrics';
+
+/** Shown when the forecast cannot be produced (e.g. not enough history yet). */
+function ForecastUnavailable({ error }: { error: Error }) {
+  return (
+    <section className="forecast-bar forecast-bar--muted" aria-label="Next month forecast">
+      <div className="forecast-bar__main">
+        <Icon name="trending_up" size={18} className="tone-muted" />
+        <span className="forecast-bar__label">Next month forecast</span>
+        <span className="forecast-bar__range">{error.message}</span>
+      </div>
+      <a className="forecast-bar__link" href="#forecast">
+        Forecast details
+        <Icon name="arrow_forward" size={16} />
+      </a>
+    </section>
+  );
+}
 
 export default function Dashboard({ month }: { month: string }) {
   const [horizon, setHorizon] = useState<Horizon>(6);
@@ -37,7 +55,11 @@ export default function Dashboard({ month }: { month: string }) {
         )}
       </Async>
 
-      {forecast.data !== null && <ForecastBar forecast={forecast.data} />}
+      {forecast.data !== null ? (
+        <ForecastBar forecast={forecast.data} />
+      ) : (
+        forecast.error && <ForecastUnavailable error={forecast.error} />
+      )}
 
       <div className="dashboard__charts">
         <Async query={trends} minHeight={380}>

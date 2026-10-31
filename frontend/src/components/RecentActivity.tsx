@@ -1,5 +1,6 @@
 import type { TransactionPage } from '../api/types';
 import { formatDate, formatSigned } from '../lib/format';
+import { ConfidenceBadge } from './ConfidenceBadge';
 import { Icon } from './Icon';
 
 export function RecentActivity({ page }: { page: TransactionPage }) {
@@ -28,6 +29,9 @@ export function RecentActivity({ page }: { page: TransactionPage }) {
                   <div className="activity__meta">
                     {txn.category_name} • {formatDate(txn.date)}
                     {txn.is_future && <span className="pill pill--neutral">Upcoming</span>}
+                    {txn.classification?.status === 'PREDICTED' && (
+                      <ConfidenceBadge confidence={txn.classification.confidence} />
+                    )}
                   </div>
                 </div>
                 <div className={`activity__amount${isIncome ? ' activity__amount--income' : ''}`}>
